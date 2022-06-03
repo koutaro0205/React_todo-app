@@ -1,44 +1,21 @@
-import React, { useState, useEffect } from "react";
+import {useTodo} from "../hooks/useTodo";
 
-import axios from "axios";
-const todoDataUrl = "http://localhost:3100/todos";
+import React, { useRef } from "react";
 
-const TodoTitle = ({ title, as }) => {
-  if (as === "h1") return <h1>{title}</h1>;
-  if (as === "h2") return <h2>{title}</h2>;
-  return <p>{title}</p>;
-};
-
-const TodoItem = ({ todo }) => {
-  return (
-    <li>
-      {todo.content}
-      <button>{todo.done ? "未完了リストへ" : "完了リストへ"}</button>
-      <button>削除</button>
-    </li>
-  );
-};
-
-const TodoList = ({ todoList }) => {
-  return (
-    <ul>
-      {todoList.map((todo) => (
-        <TodoItem todo={todo} key={todo.id} />
-      ))}
-    </ul>
-  );
-};
+import { TodoTitle } from "./TodoTitle";
+import { TodoAdd } from "./TodoAdd";
+import { TodoList } from "./TodoList";
 
 function App() {
-  const [todoList, setTodoList] = useState([]);
+  const {todoList, addTodoListItem, toggleTodoListItemStatus, deleteTodoListItem} = useTodo();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get(todoDataUrl);
-      setTodoList(response.data);
-    };
-    fetchData();
-  }, []);
+  const inputEl = useRef(null);
+
+  const handleAddTodoListItem = () => {
+    if(inputEl.current.value === "") return;
+    addTodoListItem(inputEl.current.value);
+    inputEl.current.value = "";
+  }
 
   console.log("TODOリスト:", todoList);
 
@@ -53,12 +30,22 @@ function App() {
   return (
     <>
       <TodoTitle title="TODO進捗管理" as="h1" />
-      <textarea />
-      <button>+ TODOを追加</button>
+      <TodoAdd
+      inputEl={inputEl}
+      handleAddTodoListItem={handleAddTodoListItem}
+      />
       <TodoTitle title="未完了TODOリスト" as="h2" />
-      <TodoList todoList={inCompletedList} />
+      <TodoList
+      todoList={inCompletedList}
+      toggleTodoListItemStatus={toggleTodoListItemStatus}
+      deleteTodoListItem={deleteTodoListItem}
+      />
       <TodoTitle title="完了TODOリスト" as="h2" />
-      <TodoList todoList={completedList} />
+      <TodoList
+      todoList={completedList}
+      toggleTodoListItemStatus={toggleTodoListItemStatus}
+      deleteTodoListItem={deleteTodoListItem}
+      />
     </>
   );
 }

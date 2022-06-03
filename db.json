@@ -13,7 +13,12 @@
     {
       "id": 3,
       "content": "Chakra UIをインストールする",
-      "done": false
+      "done": true
+    },
+    {
+      "content": "ファイルの切り出しに成功しました",
+      "id": "01G4MXFM9D38HE4XPM0M33V0V2",
+      "done": true
     }
   ]
 }
